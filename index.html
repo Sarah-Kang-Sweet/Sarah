@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>지금 나에게 딱 맞는 취미 스타일은?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Pretendard:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --bg-light: #f9f9f9;
+            --main-pink: #ff85a1;
+            --main-yellow: #ffeead;
+            --main-blue: #d1e8ff;
+            --main-green: #d4f1be;
+            --border-dark: #333;
+        }
+        
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--bg-light);
+            background-image: 
+                linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: #333;
+            margin: 0;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .handwritten { font-family: 'Nanum Pen Script', cursive; font-size: 1.5rem; }
+
+        /* 공통 애니메이션 */
+        .pop-in { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* 푸망 스타일 네컷 프레임 */
+        .photo-frame {
+            background: white;
+            border: 2px solid var(--border-dark);
+            box-shadow: 6px 6px 0px var(--border-dark);
+            padding: 20px;
+            border-radius: 4px;
+        }
+
+        /* 답변 버튼 */
+        .answer-btn {
+            background: white;
+            border: 2px solid var(--border-dark);
+            width: 100%;
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.75rem;
+            border-radius: 12px;
+            text-align: left;
+            transition: all 0.2s;
+            font-weight: 600;
+            box-shadow: 0 4px 0px rgba(0,0,0,0.1);
+        }
+        
+        .answer-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0px rgba(0,0,0,0.1);
+            background-color: var(--main-yellow);
+        }
+
+        /* 프로그레스 바 */
+        .progress-container {
+            height: 12px;
+            background: #eee;
+            border: 2px solid var(--border-dark);
+            border-radius: 10px;
+            overflow: hidden;
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--main-pink);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* 메인 컬러 버튼 */
+        .cta-button {
+            background: #000;
+            color: #fff;
+            font-weight: 700;
+            border-radius: 12px;
+            transition: all 0.2s;
+        }
+        .cta-button:active {
+            transform: scale(0.98);
+        }
+
+        /* 말풍선 스타일 */
+        .bubble {
+            border: 2px solid var(--border-dark);
+            border-radius: 20px;
+            padding: 8px 15px;
+            display: inline-block;
+            font-size: 0.9rem;
+            margin: 4px;
+            background: white;
+        }
+
+        .sketch-border {
+            border: 2px solid var(--border-dark);
+            border-radius: 15px;
+            position: relative;
+        }
+        
+        .sketch-border::after {
+            content: '';
+            position: absolute;
+            top: 2px; left: 2px; right: -4px; bottom: -4px;
+            border: 2px solid var(--border-dark);
+            border-radius: 15px;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="max-w-md mx-auto min-h-screen flex flex-col p-6 relative">
+        
+        <!-- START PAGE -->
+        <div id="startPage" class="my-auto pop-in flex flex-col items-center">
+            <div class="text-center mb-8">
+                <div class="inline-block px-4 py-1 border-2 border-black rounded-full text-xs font-bold mb-4 bg-white">TEST X HOBBY</div>
+                <h1 class="text-4xl font-black mb-2 tracking-tight">
+                    나만의 <span class="text-pink-500">취미</span><br>테스트
+                </h1>
+                <p class="handwritten text-2xl text-gray-600 mt-2">“성격으로 보는 인생 취미 찾기”</p>
+            </div>
+            
+            <div class="photo-frame mb-10 w-full rotate-[-1deg]">
+                <div class="bg-gray-100 aspect-[4/3] rounded border-2 border-dashed border-gray-400 flex items-center justify-center mb-6">
+                    <span class="text-4xl">📸</span>
+                </div>
+                <div class="space-y-3 text-center">
+                    <p class="font-bold text-lg">일상에 활력이 필요한가요?</p>
+                    <p class="text-sm text-gray-500 leading-relaxed">
+                        내가 언제 에너지가 솟아나는지<br>확인해봐요!
+                    </p>
+                </div>
+            </div>
+
+            <button onclick="startTest()" class="w-full py-5 cta-button text-xl shadow-lg">
+                시작하기
+            </button>
+            <p class="mt-4 text-[11px] text-gray-400">지금까지 많은 분들이 참여했어요!</p>
+        </div>
+
+        <!-- QUESTION PAGE -->
+        <div id="questionPage" class="hidden w-full pop-in pt-10">
+            <div class="progress-container">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+            <div class="mb-10 text-center">
+                <span id="questionNumber" class="inline-block bg-black text-white px-3 py-1 rounded-md text-sm font-bold mb-4">Q. 01</span>
+                <h2 id="questionText" class="text-2xl font-bold leading-tight min-h-[80px]">
+                    질문 내용
+                </h2>
+            </div>
+            <div id="answerOptions" class="flex flex-col">
+                <!-- Buttons will be generated here -->
+            </div>
+        </div>
+
+        <!-- RESULT PAGE -->
+        <div id="resultPage" class="hidden w-full pop-in py-6">
+            <div class="text-center mb-6">
+                <h3 class="handwritten text-3xl mb-1">취미네컷 나오는 중...</h3>
+                <div id="resultHeader"></div>
+            </div>
+
+            <!-- 네컷 사진 프레임 -->
+            <div id="captureArea" class="photo-frame mb-8 bg-white flex flex-col items-center">
+                <!-- 네컷 상단 (캐릭터/이모지) -->
+                <div class="w-full border-b-2 border-black pb-4 mb-4 flex flex-col items-center">
+                    <div id="resultEmoji" class="text-7xl mb-2">✨</div>
+                    <div id="resultTypeName" class="text-2xl font-black px-4 py-1 bg-yellow-200 border-2 border-black rounded-lg">유형 이름</div>
+                </div>
+
+                <!-- 네컷 중단 (키워드/특징) -->
+                <div class="w-full grid grid-cols-2 gap-3 mb-4">
+                    <div class="sketch-border p-3 bg-blue-50">
+                        <p class="text-[10px] font-bold mb-2">#특징①</p>
+                        <div id="traits1" class="flex flex-wrap"></div>
+                    </div>
+                    <div class="sketch-border p-3 bg-green-50">
+                        <p class="text-[10px] font-bold mb-2">#특징②</p>
+                        <div id="traits2" class="flex flex-wrap"></div>
+                    </div>
+                </div>
+
+                <!-- 네컷 하단 (설명) -->
+                <div class="w-full p-4 border-2 border-black rounded-xl bg-pink-50 text-sm leading-relaxed whitespace-pre-wrap" id="resultDesc">
+                </div>
+                
+                <div class="mt-4 text-[10px] font-bold text-gray-400">나만의 취미네컷 테스트 X 푸망감성</div>
+            </div>
+
+            <!-- CTA Buttons -->
+            <div class="space-y-3">
+                <div class="text-center pb-2">
+                    <p class="handwritten text-xl text-pink-500">▲ 이미지를 꾹 눌러 저장하기 ▲</p>
+                </div>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLScuBQZDkbiUm5tfou65TBdJwfmTC_8_J8uKeSoWcDUpzgsqJA/viewform" target="_blank" class="block w-full py-4 bg-pink-400 text-white rounded-xl font-bold text-center border-2 border-black shadow-[4px_4px_0px_#000]">
+                    원데이클래스 체험 신청
+                </a>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLScImDLfyiME7qZtL8euaT5CNWnNkmwZNg_s10zSPH7mO0OJsA/viewform" target="_blank" class="block w-full py-4 bg-yellow-200 text-black rounded-xl font-bold text-center border-2 border-black shadow-[4px_4px_0px_#000]">
+                    7주 과정 초급반 신청
+                </a>
+                
+                <div class="flex gap-3 pt-4">
+                    <button onclick="shareLink()" class="flex-1 py-3 bg-white border-2 border-black rounded-xl text-xs font-bold">테스트 공유하기</button>
+                    <button onclick="restart()" class="w-14 h-14 bg-white border-2 border-black rounded-xl flex items-center justify-center">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast" class="fixed top-6 left-1/2 -translate-x-1/2 bg-black text-white px-6 py-3 rounded-full text-xs font-bold opacity-0 transition-all z-[300]">
+        URL 주소가 복사되었습니다!
+    </div>
+
+    <script>
+        const questions = [
+            { q: "주말에 가장 하고 싶은 건?", a: ["집에서 조용히 쉬기", "가볍게 산책", "사람들과 어울리기", "음악 들으며 기분 전환"] },
+            { q: "음악이 나오면 나는?", a: ["잘 안 듣는다", "듣기만 한다", "흥얼거린다", "몸이 자동으로 반응한다"] },
+            { q: "새로운 사람을 만나는 게", a: ["부담스럽다", "필요하면 만난다", "아무렇지도 않다", "즐겁다"] },
+            { q: "나의 스트레스 해소 방식은?", a: ["혼자 쉰다", "먹는다", "운동한다", "사람을 만나고 활동한다"] },
+            { q: "요즘 나의 상태는?", a: ["지침", "따분함", "평온함", "새로운 게 필요함"] },
+            { q: "콘서트나 공연을 좋아하는지?", a: ["관심 없음", "가끔 가는 것만", "좋아함", "자주 가고 싶음"] },
+            { q: "몸을 움직이는 활동!", a: ["싫다", "가끔은 괜찮다", "좋지도 싫지도 않다", "즐긴다"] },
+            { q: "친구와의 거리감은?", a: ["혼자가 편하다", "가까운 친구만 만나고 싶다", "적당히 새 친구도 필요", "친밀할수록 좋아"] },
+            { q: "나에게 부족한 것은?", a: ["휴식", "활력", "자극", "설렘"] },
+            { q: "지금 내 삶에 필요한 건?", a: ["아무것도 안 하기", "리프레시", "새로운 경험", "엄청난 변화"] }
+        ];
+
+        const results = {
+            A: {
+                title: "침대지킴이",
+                emoji: "🧸",
+                desc: "당신은 이미 자기 페이스를 잘 유지하는 사람입니다.\n무리하지 않고 편안한 흐름 속에서 살아가는 타입이에요.\n\n하지만 이런 사람일수록 가끔 찾아오는 '낯선 자극'이 삶을 더 화려하게 만듭니다.\n\n스윙댄스는 복잡하지 않아요.\n그냥 음악에 몸을 살짝 맡기면 되거든요.\n조용하고 섬세한 당신에게, 작지만 분명한 설렘이 될 거예요.",
+                traits1: ["#조용한게_좋아", "#차분함", "#섬세함"],
+                traits2: ["#새로운_시도", "#리프레시_필요", "#작은설렘"]
+            },
+            B: {
+                title: "흥폭발 리듬",
+                emoji: "💃",
+                desc: "당신은 “몸과 마음이 함께 움직일 때” 비로소 살아있음을 느낍니다.\n감정의 주파수가 리듬과 만났을 때 에너지가 폭발하는 타입이죠.\n\n당신의 감각은 이미 그 리듬에 올라탈 준비가 되어 있습니다.\n\n스윙댄스는 당신을 위해 존재하는 춤입니다.\n신나는 재즈 리듬 위에서 온몸으로 흥을 터뜨릴 수 있거든요.\n솔직히, 처음 음악이 켜지는 순간 당신은 이미 반쯤 추고 있을 거예요.",
+                traits1: ["#내안의_흥", "#리듬타기", "#에너자이저"],
+                traits2: ["#몰입의_즐거움", "#땀흘리기", "#스트레스_제로"]
+            },
+            C: {
+                title: "인싸력 만렙",
+                emoji: "🐶",
+                desc: "당신은 “관계 속의 따스함”을 아는 사람입니다.\n혼자보다는 누군가와 눈을 맞추고 호흡을 나낼 때 삶의 선율이 더 풍성해집니다.\n\n자연스러운 교감이 당신의 삶을 채워주는 핵심입니다.\n\n스윙댄스는 파트너와 함께 추는 춤이에요.\n말 한마디 없이도 손끝으로 대화하고, 눈빛으로 웃게 되는 순간이 옵니다.\n당신이 가장 좋아하는 것, 바로 '연결'이 춤 안에 있어요.",
+                traits1: ["#사람이_좋아", "#공감왕", "#함께하는_기쁨"],
+                traits2: ["#새로운_인연", "#어색함_타파", "#하이텐션"]
+            },
+            D: {
+                title: "모험가 무대",
+                emoji: "🌈",
+                desc: "당신은 “경계를 넓혀가는 모험가”입니다.\n익숙한 벽을 허물고 새로운 세계를 마주할 때 진정으로 성장합니다.\n\n새로운 환경, 새로운 사람, 새로운 감각. 이 모든 것이 결합된 강렬한 경험이 필요합니다.\n\n스윙댄스는 그 모든 걸 한 번에 줍니다.\n처음 보는 파트너와 즉흥으로 맞춰가는 순간, 낯선 리듬 위에서 나만의 스텝을 찾아가는 과정.\n당신의 모험 목록에 꼭 추가해야 할 챕터예요.",
+                traits1: ["#새로운_도전", "#변화무쌍", "#자신감"],
+                traits2: ["#세계관_확장", "#취미부자", "#반전매력"]
+            }
+        };
+
+        let currentIdx = 0;
+        let score = { A: 0, B: 0, C: 0, D: 0 };
+
+        function startTest() {
+            document.getElementById('startPage').classList.add('hidden');
+            document.getElementById('questionPage').classList.remove('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            if (currentIdx >= questions.length) {
+                showResult();
+                return;
+            }
+
+            const q = questions[currentIdx];
+            document.getElementById('questionNumber').innerText = `Q. ${(currentIdx + 1).toString().padStart(2, '0')}`;
+            document.getElementById('questionText').innerText = q.q;
+            
+            const optionsDiv = document.getElementById('answerOptions');
+            optionsDiv.innerHTML = '';
+            
+            q.a.forEach((ans, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn pop-in';
+                btn.style.animationDelay = `${i * 0.05}s`;
+                btn.innerText = ans;
+                btn.onclick = () => selectAnswer(i);
+                optionsDiv.appendChild(btn);
+            });
+
+            document.getElementById('progressFill').style.width = `${((currentIdx) / questions.length) * 100}%`;
+        }
+
+        function selectAnswer(ansIdx) {
+            const types = ['A', 'B', 'C', 'D'];
+            score[types[ansIdx]]++;
+            currentIdx++;
+            setTimeout(showQuestion, 250);
+        }
+
+        function showResult() {
+            document.getElementById('questionPage').classList.add('hidden');
+            document.getElementById('resultPage').classList.remove('hidden');
+
+            let maxScore = 0;
+            let resultKey = 'A';
+            for (let key in score) {
+                if (score[key] > maxScore) {
+                    maxScore = score[key];
+                    resultKey = key;
+                }
+            }
+
+            const res = results[resultKey];
+            
+            document.getElementById('resultEmoji').innerText = res.emoji;
+            document.getElementById('resultTypeName').innerText = res.title;
+            document.getElementById('resultDesc').innerText = res.desc;
+
+            const t1 = document.getElementById('traits1');
+            t1.innerHTML = '';
+            res.traits1.forEach(t => {
+                const s = document.createElement('span');
+                s.className = 'bubble';
+                s.innerText = t;
+                t1.appendChild(s);
+            });
+
+            const t2 = document.getElementById('traits2');
+            t2.innerHTML = '';
+            res.traits2.forEach(t => {
+                const s = document.createElement('span');
+                s.className = 'bubble';
+                s.innerText = t;
+                t2.appendChild(s);
+            });
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function restart() {
+            currentIdx = 0;
+            score = { A: 0, B: 0, C: 0, D: 0 };
+            document.getElementById('resultPage').classList.add('hidden');
+            document.getElementById('startPage').classList.remove('hidden');
+            document.getElementById('progressFill').style.width = '0%';
+        }
+
+        function shareLink() {
+            const shareUrl = "https://sarah-kang-sweet.github.io/Sarah/";
+            const textArea = document.createElement("textarea");
+            textArea.value = shareUrl;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast();
+            } catch (err) {
+                console.error('URL 복사 실패');
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.style.opacity = '1';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
